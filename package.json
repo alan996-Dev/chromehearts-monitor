@@ -1,0 +1,17 @@
+{
+  "name": "chromehearts-monitor",
+  "version": "1.0.0",
+  "description": "Serverless Chrome Hearts drop and new arrival monitor using GitHub Actions and GitHub Pages.",
+  "main": "monitor.js",
+  "type": "module",
+  "scripts": {
+    "start": "node monitor.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "cheerio": "1.0.0-rc.12",
+    "dotenv": "^16.4.5",
+    "nodemailer": "^6.9.13"
+  }
+}

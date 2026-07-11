@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHROME HEARTS | Serverless Drop Monitor</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Outfit:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <div class="background-radial"></div>
+
+  <div class="dashboard-container">
+    
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-area">
+        <h1 class="brand-title">CHROME HEARTS</h1>
+        <p class="brand-subtitle">SERVERLESS DROP MONITOR</p>
+      </div>
+      <div class="live-indicator-card glass">
+        <span class="pulse-dot"></span>
+        <span class="status-text">MONITOR ACTIVE</span>
+      </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card glass">
+        <span class="stat-label">Last Checked</span>
+        <span class="stat-val" id="stat-last-checked">Loading...</span>
+        <span class="stat-desc">Updates automatically via GitHub Actions</span>
+      </div>
+      <div class="stat-card glass">
+        <span class="stat-label">Detected Arrivals</span>
+        <span class="stat-val" id="stat-total-products">0</span>
+        <span class="stat-desc">Unique catalog items parsed</span>
+      </div>
+      <div class="stat-card glass">
+        <span class="stat-label">Menu Categories</span>
+        <span class="stat-val" id="stat-total-menu">0</span>
+        <span class="stat-desc">Tracked navigation items</span>
+      </div>
+    </section>
+
+    <!-- Navigation & Filters -->
+    <nav class="filters-container glass">
+      <div class="tabs" id="category-tabs">
+        <button class="tab-btn active" data-category="all">ALL ITEMS</button>
+        <button class="tab-btn" data-category="SOCKS">SOCKS</button>
+        <button class="tab-btn" data-category="SCENTS">SCENTS</button>
+        <button class="tab-btn" data-category="BOXERS-LEGGINGS">BOXERS & LEGGINGS</button>
+        <button class="tab-btn" data-category="INTIMATES">INTIMATES</button>
+        <button class="tab-btn" data-category="BACCARAT">BACCARAT</button>
+        <button class="tab-btn" data-category="menu_changes">MENU ITEMS</button>
+      </div>
+    </nav>
+
+    <!-- Products Section -->
+    <main class="products-section">
+      <div class="section-header">
+        <h2 class="section-title" id="display-title">NEW ARRIVALS FEED</h2>
+        <span class="count-badge" id="display-count">0 Items</span>
+      </div>
+      
+      <!-- Product Grid -->
+      <div class="products-grid" id="products-grid">
+        <!-- JS inserts items here -->
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Fetching database from repository...</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p class="copyright">&copy; 2026 Chrome Hearts Monitor LLC. Powered by GitHub Actions & Pages.</p>
+      <p class="links">
+        <a href="https://www.chromehearts.com" target="_blank" rel="noopener noreferrer">Official Website</a>
+        <span>•</span>
+        <a href="https://github.com" id="repo-link" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Javascript -->
+  <script src="main.js"></script>
+</body>
+</html>

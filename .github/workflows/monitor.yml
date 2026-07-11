@@ -1,0 +1,51 @@
+name: Chrome Hearts Monitor
+
+on:
+  schedule:
+    # Runs every 10 minutes (cron schedule)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    permissions:
+      # Required to write back changes to products.json
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run monitoring check
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: npm start
+
+      - name: Commit and Push Database Updates
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/products.json
+          # Check if there are any changes to commit
+          if ! git diff --cached --exit-code; then
+            git commit -m "chore(db): update products database [skip ci]"
+            git push
+          else
+            echo "No database changes to commit."
+          fi
