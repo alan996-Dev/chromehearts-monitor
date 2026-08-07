@@ -1,6 +1,6 @@
 {
-  "last_checked": "2026-08-07T17:14:40.098Z",
-  "last_changed": "2026-07-23T22:39:25.675Z",
+  "last_checked": "2026-08-07T18:03:49.422Z",
+  "last_changed": "2026-08-07T18:03:49.422Z",
   "menu_items": [
     {
       "name": "Baccarat",
@@ -21,6 +21,10 @@
     {
       "name": "Socks",
       "url": "https://www.chromehearts.com/socks"
+    },
+    {
+      "name": "scarf",
+      "url": "https://www.chromehearts.com/scarf"
     },
     {
       "name": "LOCATIONS",
