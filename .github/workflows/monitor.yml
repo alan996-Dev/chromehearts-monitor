@@ -2,8 +2,8 @@ name: Chrome Hearts Monitor
 
 on:
   schedule:
-    # Runs every 10 minutes (cron schedule)
-    - cron: '*/10 * * * *'
+    # Runs every 10 minutes between 8 AM and 11 PM New York time (12:00 - 02:50 UTC)
+    - cron: '*/10 0-2,12-23 * * *'
   workflow_dispatch:
     # Allows manual trigger from the GitHub Actions tab
 
@@ -35,6 +35,7 @@ jobs:
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          TIMEZONE: 'America/New_York'
         run: npm start
 
       - name: Commit and Push Database Updates

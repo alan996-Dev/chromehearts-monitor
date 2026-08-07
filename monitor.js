@@ -193,6 +193,21 @@ async function scrapePage(path) {
 // Main logic
 async function run() {
   console.log('--- Starting Chrome Hearts Website Check ---');
+
+  // Check late night window (11 PM - 8 AM)
+  const tz = process.env.TIMEZONE || 'America/New_York';
+  const hourStr = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    hour: 'numeric',
+    hourCycle: 'h23'
+  }).format(new Date());
+  const currentHour = parseInt(hourStr, 10);
+
+  if (currentHour >= 23 || currentHour < 8) {
+    console.log(`[LATE NIGHT WINDOW] Current time in ${tz} is ${currentHour}:00. Skipping check (active window: 8 AM - 11 PM).`);
+    return;
+  }
+
   const db = loadDatabase();
   let hasChanges = false;
   const newProductsDetected = [];
@@ -324,10 +339,9 @@ async function run() {
     });
   }
 
-  // 3. Save updates and trigger alerts
-  db.last_checked = new Date().toISOString();
-
+  // 3. Save updates and trigger alerts ONLY when changes occur
   if (hasChanges) {
+    db.last_checked = new Date().toISOString();
     db.last_changed = new Date().toISOString();
     console.log(`Changes detected. New products: ${newProductsDetected.length}, New categories: ${newMenuItemsDetected.length}`);
     saveDatabase(db);
@@ -335,8 +349,7 @@ async function run() {
     // Send notifications
     await sendEmailNotification(newProductsDetected, newMenuItemsDetected);
   } else {
-    console.log('No new arrivals or menu modifications detected.');
-    saveDatabase(db); // Save to record the last_checked timestamp
+    console.log('No new arrivals or menu modifications detected. Database file kept intact (prevents git commit spam).');
   }
 
   console.log('--- Monitoring Run Complete ---');
