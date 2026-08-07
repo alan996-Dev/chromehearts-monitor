@@ -48,6 +48,8 @@ Sensitive credentials are kept secure in GitHub Secrets so they never show up in
 | `SMTP_PASS` | Your email app password / authentication code (e.g., Gmail App Password) |
 | `EMAIL_FROM` | The sender address displayed in the email (e.g., `Chrome Hearts Monitor <myemail@gmail.com>`) |
 | `EMAIL_TO` | The recipient email address where alerts will be sent (e.g., `myalerts@gmail.com`) |
+| `TELEGRAM_BOT_TOKEN` | *(Optional for instant push)* Telegram Bot token from `@BotFather` |
+| `TELEGRAM_CHAT_ID` | *(Optional for instant push)* Your Telegram user ID or channel Chat ID |
 
 *Note: For Gmail, you **must** use an **App Password** instead of your regular password. Enable 2-Factor Authentication in Google Account settings, go to Security, and search for "App Passwords" to generate one.*
 

@@ -167,6 +167,52 @@ async function sendEmailNotification(newProducts, newMenuItems) {
   }
 }
 
+// Send Telegram Bot instant notification (sub-second push)
+async function sendTelegramNotification(newProducts, newMenuItems) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (!token || !chatId) {
+    console.log('Telegram configuration missing. Skipping Telegram notification.');
+    return;
+  }
+
+  const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+
+  let message = `<b>🔔 CHROME HEARTS NEW ARRIVALS / DROPS!</b>\n\n`;
+
+  if (newMenuItems.length > 0) {
+    message += `<b>🆕 New Navigation Categories:</b>\n`;
+    for (const item of newMenuItems) {
+      message += `• <a href="${item.url}">${item.name}</a>\n`;
+    }
+    message += `\n`;
+  }
+
+  if (newProducts.length > 0) {
+    message += `<b>🔥 New Products Added (${newProducts.length}):</b>\n\n`;
+    for (const prod of newProducts) {
+      message += `<b>${prod.name}</b>\n`;
+      message += `💰 Price: ${prod.price || 'N/A'}\n`;
+      message += `🏷️ Category: ${prod.category || 'N/A'}\n`;
+      message += `🆔 PID: <code>${prod.id}</code>\n`;
+      message += `🔗 <a href="${prod.url}">Buy Now / View Item</a>\n\n`;
+    }
+  }
+
+  try {
+    await axios.post(tgUrl, {
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'HTML',
+      disable_web_page_preview: false
+    }, { timeout: 10000 });
+    console.log('Telegram instant notification sent successfully!');
+  } catch (err) {
+    console.error('Failed to send Telegram alert:', err.message);
+  }
+}
+
 // Scrape a page
 async function scrapePage(path) {
   const url = path.startsWith('http') ? path : `${BASE_URL}${path}`;
@@ -257,15 +303,18 @@ async function run() {
     console.error('Homepage load failed. Skipping menu change check.');
   }
 
-  // 2. Scrape Category Pages to monitor products
+  // 2. Scrape Category Pages in Parallel for Speed
   const categoryPaths = TARGET_PATHS.filter(p => p !== '/');
-  for (const path of categoryPaths) {
-    // Wait random delay to emulate human behaviour
-    const delay = Math.floor(Math.random() * 2000) + 1000;
-    await sleep(delay);
+  const scrapeResults = await Promise.allSettled(
+    categoryPaths.map(async (path) => {
+      const html = await scrapePage(path);
+      return { path, html };
+    })
+  );
 
-    const html = await scrapePage(path);
-    if (!html) continue;
+  for (const res of scrapeResults) {
+    if (res.status !== 'fulfilled' || !res.value || !res.value.html) continue;
+    const { path, html } = res.value;
 
     const $ = cheerio.load(html);
     const categoryName = path.replace('/', '').toUpperCase();
@@ -346,8 +395,11 @@ async function run() {
     console.log(`Changes detected. New products: ${newProductsDetected.length}, New categories: ${newMenuItemsDetected.length}`);
     saveDatabase(db);
 
-    // Send notifications
-    await sendEmailNotification(newProductsDetected, newMenuItemsDetected);
+    // Send notifications via Email and Telegram
+    await Promise.allSettled([
+      sendEmailNotification(newProductsDetected, newMenuItemsDetected),
+      sendTelegramNotification(newProductsDetected, newMenuItemsDetected)
+    ]);
   } else {
     console.log('No new arrivals or menu modifications detected. Database file kept intact (prevents git commit spam).');
   }
